@@ -1,32 +1,69 @@
-# Driver Reputation Passport Flutter App
+<img src="assets/logo.png" alt="App Logo" width="120"/>
 
-A Flutter application that interacts with a Solidity smart contract (`DriverReputationPassport`) deployed on a Ganache blockchain. This app allows users to fetch and display driver information, vehicle details, and accident history by entering a 6-digit driver ID. Designed as a learning tool for students to explore Flutter and Ethereum blockchain integration.
+# Driver Reputation Passport Flutter App 🚘🔗
 
-## Features
-- **Driver Data Retrieval**: Fetch driver information, vehicle details, and accident history from the blockchain using a 6-digit driver ID.
-- **User-Friendly UI**: Clean interface with input fields, buttons, and card-based data display.
-- **Blockchain Integration**: Connects to a Ganache blockchain using the `web3dart` package.
-- **Error Handling**: Displays meaningful error messages for invalid inputs or blockchain issues.
-- **Modular Code**: Organized into separate files for UI, models, and blockchain services.
+A futuristic and educational **Flutter** app that connects to an Ethereum **Solidity smart contract** (`DriverReputationPassport`) deployed locally via **Ganache**. With this app, users can easily fetch and view verified **driver profiles, accident records, and vehicle details** by entering a simple 6-digit driver ID.
 
-## Project Structure
-The app is organized for modularity and clarity:
+---
+
+## 🚀 Features
+
+* 🔍 **Driver Data Retrieval**
+  Enter a 6-digit driver ID to fetch verified **driver profile**, **vehicle info**, and **accident history** directly from the blockchain.
+
+* 🖥️ **Futuristic & Clean UI**
+  A responsive, card-based layout optimized for web, Android, and iOS with smooth interactions and feedback.
+
+* 🔗 **Blockchain-Powered**
+  Interacts seamlessly with a **Ganache** Ethereum node using the `web3dart` package.
+
+* ⚠️ **Robust Error Handling**
+  Invalid ID? No data? Network issue? The app informs the user clearly and helpfully.
+
+* 🧱 **Modular Architecture**
+  Clear and well-separated logic for UI, models, and blockchain services.
+
+---
+
+## 📲 Download the APK
+
+👉 [Click here to download the APK](https://drive.google.com/file/d/1XVF-YT0rB6JRd5F6QODrNP3oUCQ58rG3/view?usp=drivesdk)
+
+---
+
+## 🧭 App Screenshots
+
+| Home Screen                        | Valid Driver Data                  | Vehicle Info                       | Accident History                   |
+| ---------------------------------- | ---------------------------------- | ---------------------------------- | ---------------------------------- |
+| ![ss1](assets/screenshots/ss1.png) | ![ss2](assets/screenshots/ss2.png) | ![ss3](assets/screenshots/ss3.png) | ![ss4](assets/screenshots/ss4.png) |
+
+---
+
+## 🧱 Project Structure
+
 ```
 lib/
-├── main.dart               # Entry point, sets up MaterialApp
-├── home_screen.dart        # Main UI with input field and data display
-├── blockchain_service.dart # Blockchain interaction logic (connects to Ganache)
-├── models.dart             # Dart models for DriverInfo, VehicleInfo, AccidentInfo
+├── main.dart               # App entry point
+├── home_screen.dart        # Main screen with input and data cards
+├── blockchain_service.dart # All Web3 and contract interaction logic
+├── models.dart             # Data models for Driver, Vehicle, Accident
+├── theme/                  # Styling and theme customization
+├── splash/                 # Splash screen and initial loading
 ```
 
-## Learning Outcomes
-This project is designed to teach students:
-- **Flutter Basics**: Building UI with `StatelessWidget`, `StatefulWidget`, `TextField`, `ElevatedButton`, and `Card`.
-- **State Management**: Using `setState` to update the UI dynamically.
-- **Blockchain Integration**: Interacting with Ethereum using `web3dart` to call smart contract functions.
-- **Data Modeling**: Creating Dart classes to mirror Solidity structs.
-- **Error Handling**: Implementing try-catch blocks and user feedback.
-- **Modular Design**: Organizing code into separate files for maintainability.
+---
 
+## 🎓 Learning Outcomes
 
-Built with ❤️ for learning Flutter and blockchain development.
+This project is ideal for **students and enthusiasts** exploring how to merge **blockchain** with **mobile development** using Flutter.
+
+* 🧠 Understand **Flutter UI basics**: `StatefulWidget`, `TextField`, `Card`, `ElevatedButton`
+* 🔄 Learn **state management** using `setState`
+* 🔐 Discover how to **interact with Ethereum smart contracts** using `web3dart`
+* 🧰 Model Solidity structs in **Dart classes**
+* 🛠️ Build robust apps with clear **error handling**
+* 📦 Follow a **modular architecture** for scalability
+
+---
+
+> Built with ❤️ to explore the intersection of **Flutter** and **blockchain** development.
