@@ -1,0 +1,987 @@
+import 'package:web3dart/web3dart.dart';
+import 'package:http/http.dart';
+import 'models.dart';
+
+// Service class to handle blockchain interactions
+class BlockchainService {
+  // Ganache RPC URL (adjust if different)
+  static const String _rpcUrl = 'http://10.0.2.2:12121'; //10.0.2.2:12121 or 127.0.0.1:12121
+  // Contract address from deployment
+  static const String _contractAddress = '0xDd326b4472590943057258771453e286B75836D3';
+  // Contract ABI (trimmed for brevity, use the full ABI provided)
+  static const String _abi = '''
+  [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "driverId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			}
+		],
+		"name": "AccidentAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "admin",
+				"type": "address"
+			}
+		],
+		"name": "AdminAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "admin",
+				"type": "address"
+			}
+		],
+		"name": "AdminRemoved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "driverId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "DriverAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "driverId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "regNumber",
+				"type": "string"
+			}
+		],
+		"name": "VehicleAdded",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "accidents",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "dateTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "cause",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "caseStatus",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "claimStatus",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "photoUrl",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "firNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "exists",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_driverId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_dateTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_location",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_description",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_cause",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_caseStatus",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_claimStatus",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_photoUrl",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_firNumber",
+				"type": "string"
+			}
+		],
+		"name": "addAccident",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_admin",
+				"type": "address"
+			}
+		],
+		"name": "addAdmin",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_dob",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_mobile",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_licenseNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_permanentAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_bloodGroup",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_vehicleType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_imageUrl",
+				"type": "string"
+			}
+		],
+		"name": "addDriver",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_driverId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_company",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_model",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_registrationNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_pucDates",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_ownerName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_insuranceProvider",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_policyNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_policyValidity",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_insuranceType",
+				"type": "string"
+			}
+		],
+		"name": "addVehicle",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "admins",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_driverId",
+				"type": "uint256"
+			}
+		],
+		"name": "driverExists",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "driverIdCounter",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "drivers",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "dob",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "mobile",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "email",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "licenseNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "permanentAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "bloodGroup",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "vehicleType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "imageUrl",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "exists",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_driverId",
+				"type": "uint256"
+			}
+		],
+		"name": "getAccidentHistory",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "dateTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "location",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "cause",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "caseStatus",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "claimStatus",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "photoUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "firNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "exists",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct DriverReputationPassport.AccidentInfo[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_driverId",
+				"type": "uint256"
+			}
+		],
+		"name": "getDriverData",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "dob",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "mobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "licenseNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "permanentAddress",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "bloodGroup",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "vehicleType",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "imageUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "exists",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct DriverReputationPassport.DriverInfo",
+				"name": "",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "company",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "model",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "registrationNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "pucDates",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ownerName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "insuranceProvider",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "policyNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "policyValidity",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "insuranceType",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "exists",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct DriverReputationPassport.VehicleInfo",
+				"name": "",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "dateTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "location",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "cause",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "caseStatus",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "claimStatus",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "photoUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "firNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "exists",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct DriverReputationPassport.AccidentInfo[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_driverId",
+				"type": "uint256"
+			}
+		],
+		"name": "getDriverInfo",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "dob",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "mobile",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "licenseNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "permanentAddress",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "bloodGroup",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "vehicleType",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "imageUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "exists",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct DriverReputationPassport.DriverInfo",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_driverId",
+				"type": "uint256"
+			}
+		],
+		"name": "getVehicleInfo",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "company",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "model",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "registrationNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "pucDates",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ownerName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "insuranceProvider",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "policyNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "policyValidity",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "insuranceType",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "exists",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct DriverReputationPassport.VehicleInfo",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_admin",
+				"type": "address"
+			}
+		],
+		"name": "removeAdmin",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "vehicles",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "company",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "model",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "registrationNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "pucDates",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ownerName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "insuranceProvider",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "policyNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "policyValidity",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "insuranceType",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "exists",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]''';
+
+  late Web3Client _client;
+  late DeployedContract _contract;
+
+  // Constructor to initialize blockchain connection
+  BlockchainService() {
+    // Initialize Web3 client with Ganache RPC URL
+    _client = Web3Client(_rpcUrl, Client());
+    // Load the contract using ABI and address
+    _contract = DeployedContract(
+      ContractAbi.fromJson(_abi, 'DriverReputationPassport'),
+      EthereumAddress.fromHex(_contractAddress),
+    );
+  }
+
+  // Fetch driver data from the blockchain
+  Future<(DriverInfo, VehicleInfo, List<AccidentInfo>)> getDriverData(
+      int driverId) async {
+    try {
+      // Call the getDriverData function on the contract
+      final result = await _client.call(
+        contract: _contract,
+        function: _contract.function('getDriverData'),
+        params: [BigInt.from(driverId)],
+      );
+
+      // Parse the result into Dart models
+      final driverInfo = DriverInfo.fromContract(result[0] as List<dynamic>);
+      final vehicleInfo = VehicleInfo.fromContract(result[1] as List<dynamic>);
+      final accidents = (result[2] as List<dynamic>)
+          .map((accident) => AccidentInfo.fromContract(accident as List<dynamic>))
+          .toList();
+
+      return (driverInfo, vehicleInfo, accidents);
+    } catch (e) {
+      // Handle errors (e.g., driver doesn't exist or network issues)
+      throw Exception('Failed to fetch driver data: $e');
+    }
+  }
+
+  // Clean up resources
+  void dispose() {
+    _client.dispose();
+  }
+}
