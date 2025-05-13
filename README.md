@@ -33,8 +33,8 @@ A futuristic and educational **Flutter** app that connects to an Ethereum **Soli
 
 ## 🧭 App Screenshots
 
-| Home Screen                        | Valid Driver Data                  | Vehicle Info                       | Accident History                   |
-| ---------------------------------- | ---------------------------------- | ---------------------------------- | ---------------------------------- |
+| Main Screen                        | Home Screen                        | About Us                           | Contact us                         |
+|------------------------------------|------------------------------------|------------------------------------|------------------------------------|
 | ![ss1](assets/screenshots/ss1.png) | ![ss2](assets/screenshots/ss2.png) | ![ss3](assets/screenshots/ss3.png) | ![ss4](assets/screenshots/ss4.png) |
 
 ---
