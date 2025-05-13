@@ -28,15 +28,5 @@ This project is designed to teach students:
 - **Error Handling**: Implementing try-catch blocks and user feedback.
 - **Modular Design**: Organizing code into separate files for maintainability.
 
-## Troubleshooting
-- **Error: Undefined name 'EthereumAddress'**:
-    - Ensure `web3dart: ^2.7.2` is in `pubspec.yaml`. If using `^3.0.0`, check import paths (e.g., `package:web3dart/web3dart.dart`).
-    - Run `flutter clean && flutter pub get`.
-- **Ganache Connection Issues**:
-    - Verify Ganache is running at `HTTP://127.0.0.1:12121`.
-    - Check the contract address in `blockchain_service.dart`.
-- **No Data Displayed**:
-    - Confirm the contract has data for the entered driver ID.
-    - Use Remix to inspect the contract state.
 
 Built with ❤️ for learning Flutter and blockchain development.
